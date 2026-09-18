@@ -15,7 +15,11 @@ const InstagramIcon = ({ className = "h-5 w-5" }) => (
 );
 
 export const ContactSection = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [isSending, setIsSending] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -23,25 +27,52 @@ export const ContactSection = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSending(true);
 
-    // Simulate sending delay
-    setTimeout(() => {
-      setIsSending(false);
-      setShowToast(true);
-      setFormData({ name: "", email: "", message: "" });
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          subject: "New Portfolio Contact Message",
+          from_name: "Portfolio Website",
+        }),
+      });
 
-      // Auto-hide toast notification after 4 seconds
-      setTimeout(() => {
-        setShowToast(false);
-      }, 4000);
-    }, 1500);
+      const result = await response.json();
+
+      if (result.success) {
+        setFormData({ name: "", email: "", message: "" });
+        setShowToast(true);
+
+        setTimeout(() => {
+          setShowToast(false);
+        }, 4000);
+      } else {
+        alert(result.message || "Failed to send message.");
+      }
+    } catch (error) {
+      console.error("Web3Forms error:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
-    <section id="contact" className="pt-24 pb-12 px-4 relative z-10 flex flex-col justify-between min-h-screen">
+    <section
+      id="contact"
+      className="pt-24 pb-12 px-4 relative z-10 flex flex-col justify-between min-h-screen"
+    >
       <div className="container mx-auto max-w-5xl">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -49,7 +80,8 @@ export const ContactSection = () => {
             Get In <span className="text-primary text-glow">Touch</span>
           </h2>
           <p className="text-foreground/70 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
-            Have a project in mind or want to collaborate? Feel free to reach out. I'm always open to discussing new opportunities.
+            Have a project in mind or want to collaborate? Feel free to reach
+            out. I'm always open to discussing new opportunities.
           </p>
         </div>
 
@@ -68,8 +100,12 @@ export const ContactSection = () => {
                   <Mail className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">Email</p>
-                  <p className="text-sm md:text-base text-foreground font-medium">mohammadsharifi2505@gmail.com</p>
+                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">
+                    Email
+                  </p>
+                  <p className="text-sm md:text-base text-foreground font-medium">
+                    mohammadsharifi2505@gmail.com
+                  </p>
                 </div>
               </div>
 
@@ -79,8 +115,12 @@ export const ContactSection = () => {
                   <Phone className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">Phone</p>
-                  <p className="text-sm md:text-base text-foreground font-medium">+93 (0) 796353616</p>
+                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">
+                    Phone
+                  </p>
+                  <p className="text-sm md:text-base text-foreground font-medium">
+                    +93 (0) 796353616
+                  </p>
                 </div>
               </div>
 
@@ -90,15 +130,21 @@ export const ContactSection = () => {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">Location</p>
-                  <p className="text-sm md:text-base text-foreground font-medium">Kabul, Afghanistan</p>
+                  <p className="text-xs text-foreground/50 font-medium uppercase tracking-wider">
+                    Location
+                  </p>
+                  <p className="text-sm md:text-base text-foreground font-medium">
+                    Kabul, Afghanistan
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Connect With Me (Social Logos) */}
             <div className="pt-6">
-              <p className="text-sm font-medium text-foreground/80 mb-4">Connect With Me</p>
+              <p className="text-sm font-medium text-foreground/80 mb-4">
+                Connect With Me
+              </p>
               <div className="flex items-center gap-4">
                 {/* Social links set to '#' so you can update them individually */}
                 <a
@@ -188,14 +234,18 @@ export const ContactSection = () => {
       {showToast && (
         <div className="fixed bottom-6 right-6 z-50 animate-bounce flex items-center gap-3 bg-card border border-primary/40 text-foreground px-5 py-3 rounded-xl shadow-2xl backdrop-blur-xl">
           <CheckCircle2 className="h-5 w-5 text-primary" />
-          <span className="text-sm font-medium">Message sent successfully!</span>
+          <span className="text-sm font-medium">
+            Message sent successfully!
+          </span>
         </div>
       )}
 
       {/* Footer */}
       <footer className="mt-20 pt-8 border-t border-border/40 text-center text-xs text-foreground/50">
         <p>
-          © {new Date().getFullYear()} <span className="font-semibold text-foreground">[313-SHARIFI]</span>. All rights reserved.
+          © {new Date().getFullYear()}{" "}
+          <span className="font-semibold text-foreground">[313-SHARIFI]</span>.
+          All rights reserved.
         </p>
       </footer>
     </section>
