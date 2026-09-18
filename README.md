@@ -1,4 +1,4 @@
-(./PORTFOLIO.png)
+![Portfolio Screenshot](./PORTFOLIO.png)
 
 # React + Vite
 
